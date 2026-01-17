@@ -29,6 +29,12 @@ def format_price(price):
     else:
         return f"${p:.4f}"
 
+COIN_INFO = {
+    "BTC": "비트코인",
+    "ETH": "이더리움",
+    "SOL": "솔라나"
+}
+
 def update_readme(prices):
     # KST 시간
     kst = timezone(timedelta(hours=9))
@@ -37,39 +43,49 @@ def update_readme(prices):
     rows = []
     for coin in COINS:
         price = prices.get(coin, "N/A")
+        name = COIN_INFO.get(coin, coin)
         if price != "N/A":
             formatted = format_price(price)
-            rows.append(f"| {coin} | {formatted} | - |")
+            rows.append(f"| {coin} | {formatted} | {name} |")
         else:
-            rows.append(f"| {coin} | N/A | - |")
+            rows.append(f"| {coin} | N/A | {name} |")
 
     table_content = "\n".join(rows)
 
-    readme = f"""# 🚀 Crypto Portfolio
+    readme = f"""# 🚀 암호화폐 포트폴리오
 
-실시간 암호화폐 가격 트래커 (Hyperliquid)
+Hyperliquid 거래소 기준 실시간 암호화폐 가격을 추적합니다.
 
 ## 💰 현재 가격
 
-| 코인 | 가격 (USD) | 24h 변동 |
-|------|-----------|----------|
+| 코인 | 가격 (USD) | 설명 |
+|------|-----------|------|
 {table_content}
 
-> 마지막 업데이트: {now}
+> 📅 마지막 업데이트: {now}
 
-## 📊 트래킹 코인
+## 📊 추적 중인 코인
 
-- **BTC** - Bitcoin
-- **ETH** - Ethereum
-- **SOL** - Solana
+| 코인 | 이름 | 설명 |
+|------|------|------|
+| BTC | 비트코인 | 최초의 암호화폐, 디지털 금 |
+| ETH | 이더리움 | 스마트 컨트랙트 플랫폼 |
+| SOL | 솔라나 | 고속 블록체인 네트워크 |
 
 ## ⚙️ 자동 업데이트
 
-GitHub Actions로 1시간마다 자동 업데이트됩니다.
+- GitHub Actions를 통해 **매 시간** 자동으로 가격이 업데이트됩니다
+- 수동 업데이트: Actions 탭 → "Update Crypto Prices" → "Run workflow"
+
+## 🛠️ 기술 스택
+
+- **데이터 소스**: [Hyperliquid API](https://hyperliquid.xyz)
+- **자동화**: GitHub Actions
+- **언어**: Python 3.11
 
 ---
 
-*Powered by [Hyperliquid API](https://hyperliquid.xyz)*
+*이 포트폴리오는 [Claude Code](https://claude.ai)와 함께 만들었습니다* 🤖
 """
 
     with open("README.md", "w") as f:
